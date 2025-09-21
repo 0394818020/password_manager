@@ -10,7 +10,7 @@ var acceptPas = false;
 var acceptUser = false;
 
 
-//Register
+//Register-checking
 passwordInput.addEventListener("input", function(){
     const password = passwordInput.value;
 
