@@ -4,6 +4,7 @@ const passwordInput = document.getElementById("password");
 const matchText = document.getElementById("match");
 const strengthText = document.getElementById("strength");
 const button = document.getElementById("button");
+const pmApi = "http://localhost:3000/User";
 
 var acceptPas = false;
 var acceptUser = false;
@@ -66,9 +67,7 @@ confirmInput.addEventListener("input", function() {
 })
 
 
-//API
-const pmApi = "http://localhost:3000/User"
-
+//Register
 function Register() {
     var username = document.querySelector('#username').value;
     var password = document.querySelector('#confirmPassword').value;
