@@ -1,0 +1,52 @@
+import { users } from "../model/users.js";
+import { otp } from "../model/otp.js";
+
+const forgot_password = (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message : "không bỏ trống email!"});
+    }
+
+    users.checkEmail(email, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message : "Lỗi khi kiểm tra email!"});
+        }
+        if (result.length === 0) {
+            return res.status(401).json({ message : "email không tồn tại!"});
+        }
+
+        otp.deleteOTP(email, (err, result) => {
+            if (err)
+                return res.status(500).json({ message : "Xảy ra lỗi khi xóa otp!"});
+
+            otp.createOTP(email, (err, result) => {
+                if (err)
+                    return res.status(500).json({ message: "Xảy ra lỗi khi tạo otp!"});
+
+                let otp_code;
+
+                otp.getOTP(email, (err, result) => {
+                    if (err)
+                        return res.status(500).json({ message : "Lỗi khi lây otpp!"});
+                    
+                    if (result.length === 0) 
+                        return res.status(500).json({ message : "Lỗi không tìm thấy otp!"});
+
+                    otp_code = result[0].otp; 
+
+                    otp.sendOTP(email, otp_code, (sendErr) => {
+                        if (sendErr)
+                            return res.status(500).json({ message : "Lỗi khi gửi otp!"});
+
+                        console.log("OTP đã gửi : ", otp_code);
+                        
+                        res.status(201).json({message : "tạo otp và gửi thành công!"});
+                    })
+                })
+            })
+        })
+    })
+}
+
+export default forgot_password;
