@@ -13,9 +13,8 @@ const forgot_password = (req, res) => {
             return res.status(500).json({ message : "Lỗi khi kiểm tra email!"});
         }
         if (result.length === 0) {
-            return res.status(401).json({ message : "email không tồn tại!"});
+            return res.status(401).json({ message : "Lỗi khi kiểm tra email!"});
         }
-
         otp.deleteOTP(email, (err, result) => {
             if (err)
                 return res.status(500).json({ message : "Xảy ra lỗi khi xóa otp!"});
@@ -28,7 +27,7 @@ const forgot_password = (req, res) => {
 
                 otp.getOTP(email, (err, result) => {
                     if (err)
-                        return res.status(500).json({ message : "Lỗi khi lây otpp!"});
+                        return res.status(500).json({ message : "Lỗi khi lấy otp!"});
                     
                     if (result.length === 0) 
                         return res.status(500).json({ message : "Lỗi không tìm thấy otp!"});

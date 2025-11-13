@@ -28,5 +28,5 @@ export const users = {
 
         const sql = "INSERT INTO users(username, password, email) VALUES (?,?,?)"
         db.execute(sql, [username, hashpassword, email], execute);
-    }
+    },
 }

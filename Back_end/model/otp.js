@@ -42,15 +42,19 @@ export const otp = {
             }
         });
 
-        console.log(process.env.EMAIL);
-
         const mailOptions = {
-            from : "password-manager web",
+            from : `Password-manager : ${process.env.EMAIL}`,
             to : email,
-            subject: 'otp code',
-            text: otp
+            subject: 'Your OTP code (Expires in 3 minutes)',
+            text: `Your OTP code is : ${otp}`
         }
 
         transporter.sendMail(mailOptions, execute);
+    },
+
+    verifyOTP: (email, otp, execute) => {
+        const sql = "DELETE FROM otp WHERE email = ? AND otp = ? AND NOW() < time_existed";
+
+        db.execute(sql, [email, otp], execute);
     }
 }

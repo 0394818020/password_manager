@@ -12,13 +12,13 @@ const sign_up = (req, res) => {
         if (err)
             return res.status(500).json({message : "Lỗi không thể thực hiện truy vấn!"});
         if (result.length !== 0)
-            return res.status(400).json({message : "username đã tồn tại!"});
+            return res.status(400).json({message : "username hoặc email đã tồn tại!"});
 
         users.checkEmail(email, (err, result) => {
             if (err)
                 return res.status(500).json({message : "Lỗi không thể thực hiện truy vấn!"});
             if (result.length !== 0)
-                return res.status(400).json({message : "email đã tồn tại!"});
+                return res.status(400).json({message : "username hoặc email đã tồn tại!"});
 
             users.createNewUser(username, password, email, (err, result) => {
                 if (err)
