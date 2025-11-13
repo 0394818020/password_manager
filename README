@@ -1,3 +1,6 @@
 project password_manager:
-start: 12/11/2015
-end:
+
+start project : 12/11/2025
+
+12/11/2025: sign_up and forgot_password
+13/11/2025: verify_OTP
