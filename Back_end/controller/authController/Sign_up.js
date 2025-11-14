@@ -1,4 +1,4 @@
-import { users } from "../model/users.js";
+import { users } from "../../model/users.js";
 
 const sign_up = (req, res) => {
     const {username, password, email} = req.body;

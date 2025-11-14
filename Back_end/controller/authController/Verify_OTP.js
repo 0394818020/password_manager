@@ -1,4 +1,4 @@
-import { otp } from "../model/otp.js"
+import { otp } from "../../model/otp.js"
 
 const verify_OTP = (req, res) => {
     const {email, otp_code} = req.body;

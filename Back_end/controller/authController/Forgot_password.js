@@ -1,5 +1,5 @@
-import { users } from "../model/users.js";
-import { otp } from "../model/otp.js";
+import { users } from "../../model/users.js";
+import { otp } from "../../model/otp.js";
 
 const forgot_password = (req, res) => {
     const { email } = req.body;
