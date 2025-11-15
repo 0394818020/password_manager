@@ -2,5 +2,7 @@ project password_manager:
 
 start project : 12/11/2025
 
-12/11/2025: sign_up and forgot_password
-13/11/2025: verify_OTP
+12/11/2025: Implement sign_up and forgot_password
+13/11/2025: Implement verify_OTP
+14/11/2025: Implement sign_in
+15/11/2025: Prevent duplicate session in DB (just one session per user at once), separate functions into the correct folders (createJwt, createRefreshToken, comparePassword => service.js)
