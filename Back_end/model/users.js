@@ -16,11 +16,6 @@ export const users = {
         const sql = "SELECT 1 FROM users WHERE email = ?";
         db.execute(sql, [email], execute);
     },
-
-    getEmailbyEmail : (email, execute) => {
-        const sql = "SELECT email FROM users WHERE email = ?";
-        db.execute(sql, [email], execute);
-    },
     
     createNewUser : async (username, password, email, execute) => {
         const salt = 10;
@@ -29,4 +24,12 @@ export const users = {
         const sql = "INSERT INTO users(username, password, email) VALUES (?,?,?)"
         db.execute(sql, [username, hashpassword, email], execute);
     },
+
+    updatePassword : async (username, newPassword, execute) => {
+        const salt = 10;
+        const hashpassword = await bcrypt.hash(newPassword, salt);
+
+        const sql = "UPDATE users SET password = ? WHERE username = ?";
+        db.execute(sql, [hashpassword, username], execute);
+    }
 }

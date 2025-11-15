@@ -1,7 +1,4 @@
 import { db } from "../config/db.js"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import crypto from "crypto"
 
 export const session = {
     createSession : (id, refreshToken, execute) => {
@@ -10,16 +7,15 @@ export const session = {
         db.execute(sql, [id, refreshToken], execute);
     },
 
-    comparePassword : async (password, db_password) => {
+    updateSession : (userId, refreshToken, execute) => {
+        const sql = "UPDATE session SET refreshToken = ?, time_existed = NOW() + INTERVAL 7 DAY WHERE userId = ?";
 
-        return await bcrypt.compare(password, db_password)
+        db.execute(sql, [refreshToken, userId], execute);
     },
 
-    createJWT : (userId) => {
-        return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_TIME });
-    },
+    checkSession : (userId, execute) => {
+        const sql = "SELECT 1 FROM session WHERE userId = ?"
 
-    createRefreshToken : () => {
-        return crypto.randomBytes(64).toString('hex');
+        db.execute(sql, [userId], execute);
     }
 }

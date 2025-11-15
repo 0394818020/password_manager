@@ -3,7 +3,7 @@ import { otp } from "../../model/otp.js"
 const verify_OTP = (req, res) => {
     const {email, otp_code} = req.body;
 
-    if (!otp_code) {
+    if (!otp_code || !email) {
         return res.status(400).json({message : "Thiếu otp hoặc email!"});
     }
 

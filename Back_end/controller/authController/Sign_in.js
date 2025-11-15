@@ -1,56 +1,63 @@
 import { users } from "../../model/users.js"
+import { service } from "../../service/service.js"
 import { session } from "../../model/session.js"
-import jwt from "jsonwebtoken"
-import dotenv from "dotenv"
-import crypto from "crypto"
-
-dotenv.config({ path : ".env"});
 
 const sign_in = (req, res) => {
-    const { username, password } = req.body;  
+    const { username , password } = req.body;
 
     if (!username || !password) {
-        return res.status(401).json({ message : "Vui lòng điền đầy đủ thông tin!"});
+        return res.status(401).json({ message : "Vui lòng điền đầy đủ thông tin!"})
     }
 
     users.getUserbyUsername(username, async (err, result) => {
-        if (err) {
-            return res.status(401).json({ message : "Sai tên tài khoản hoặc mật khẩu!"});
-        }
-
-        if (result.length === 0) {
+        if (err || result.length === 0) {
             return res.status(401).json({ message : "Sai tên tài khoản hoặc mật khẩu!"});
         }
 
         const user = result[0];
 
-        const password_succesfull = await session.comparePassword(password, user.password);
+        const password_successful = await service.comparePassword(password, user.password);
 
-        if (!password_succesfull) {
-            return res.status(401).json({ message : "Sai tên tài khoản hoặc mật khẩu"});
+        if (!password_successful) {
+            return res.status(401).json({ message : "Sai tên tài khoản hoặc mật khẩu!"});
         }
 
-        const accessToken = session.createJWT({ userId: user.id });
+        const accessToken = service.createJWT({userId : user.id});
 
-        const refreshToken = session.createRefreshToken();
-
-        session.createSession(user.id, refreshToken, (err, result) => {
+        session.checkSession(user.id, (err, result) => {
             if (err) {
-                console.log(err);
-                return res.status(500).json({ message : "Lỗi khi xử lí đăng nhập!"})
-                
+                return res.status(500).json({ message : "Lỗi trong quá trình xác thực!"});
             }
 
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly : true,
-                secure : false,
-                sameSite : 'none',
-                maxAge : process.env.REFRESH_TOKEN_TIME
-            })
+            const refreshToken = service.createRefreshToken();
 
-            res.status(200).json({ message : `${user.username} đăng nhập thành công!`, accessToken});
+            if (result.length === 0) {
+                session.createSession(user.id, refreshToken, (err, result) => {
+                if (err) 
+                    return res.status(500).json({ message : "Lỗi trong quá trình xác thực!"});
+
+                sendResponse(res, refreshToken, accessToken, user.username);
+                })
+            }
+            else if (result.length !== 0) {
+                session.updateSession(user.id, refreshToken, (err, result) => {
+                if (err) 
+                    return res.status(500).json({ message : "Lỗi trong quá trình xác thực!"});
+
+                sendResponse(res, refreshToken, accessToken, user.username);
+                })
+            }
         })
     })
+}
+
+function sendResponse (res, refreshToken, accessToken, username) {
+    res.cookie("refreshToken", refreshToken ,{
+        httpOnly : true,
+        maxAge : process.env.REFRESH_TOKEN_TIME
+    })
+
+    res.status(200).json({ message : `${username} đăng nhập thành công!`, accessToken})
 }
 
 export default sign_in;
